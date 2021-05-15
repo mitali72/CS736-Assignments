@@ -1,0 +1,423 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-03-27"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Initialization for chosen beta</a></li><li><a href="#3">Iterations for chosen beta</a></li><li><a href="#4">Saving images for chosen beta</a></li><li><a href="#5">Initialization for beta = 0 (No MRF)</a></li><li><a href="#6">Iterations for beta = 0</a></li><li><a href="#7">Saving images for beta = 0</a></li></ul></div><pre class="codeinput">load(<span class="string">'../data/assignmentSegmentBrainGmmEmMrf.mat'</span>);
+
+Y = imageData;
+mask = imageMask;
+K = 3;
+</pre><h2 id="2">Initialization for chosen beta</h2><pre class="codeinput"><span class="comment">%(a) According to us, a beta of 10 gives a smooth, realistic segmentation</span>
+beta = 10;
+
+<span class="comment">%(b) The initial estimate is was made manually based on approximate values</span>
+<span class="comment">%of the different classes in the image. Position was not taken into</span>
+<span class="comment">%account. The regions were thus (0.6,1), [0.4,0.6], (0,0.4).</span>
+X = zeros(256,256);
+<span class="keyword">for</span> i=1:256
+        <span class="keyword">for</span> j=1:256
+            <span class="keyword">if</span> (mask(i,j)==0)
+                <span class="keyword">continue</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span>(Y(i,j)&lt;0.4)
+                X(i,j)=3;  <span class="comment">%CSF</span>
+            <span class="keyword">elseif</span>(Y(i,j)&gt;0.6)
+                X(i,j)=1;  <span class="comment">%White Matter</span>
+            <span class="keyword">else</span>
+                X(i,j)=2;  <span class="comment">%Grey Matter</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%(c) The variance has been initialised to 1, while the means have been</span>
+<span class="comment">%initialized based on some test runs done on the image</span>
+vari = [1,1,1];
+mu = [0.64,0.52,0.29];
+</pre><h2 id="3">Iterations for chosen beta</h2><pre class="codeinput"><span class="keyword">for</span> i= 1:30
+    comb = Member(Y, X, mask, K, mu, vari, beta);
+    mem = comb.a;
+    X = comb.b;
+    post = [<span class="string">'log Posterior update '</span>,num2str(comb.c),<span class="string">' ==&gt; '</span>,num2str(comb.d)];
+    disp(post)
+    comb= Gauss_update(Y, mem, mask, K);
+    mu = comb.a;
+    vari = comb.b;
+<span class="keyword">end</span>
+<span class="comment">%Optimal class means for chosen beta-</span>
+mean_display = [<span class="string">'means '</span>,num2str(mu)];
+disp(mean_display);
+</pre><pre class="codeoutput">log Posterior update -41848.8605 ==&gt; -2244.3582
+log Posterior update -27851.2691 ==&gt; -9936.5188
+log Posterior update -33142.4677 ==&gt; -11789.5665
+log Posterior update -26388.0347 ==&gt; -11846.6627
+log Posterior update -30801.4868 ==&gt; -11856.2165
+log Posterior update -26139.462 ==&gt; -11852.7174
+log Posterior update -30440.5715 ==&gt; -11859.1411
+log Posterior update -25788.6794 ==&gt; -11804.2665
+log Posterior update -30080.878 ==&gt; -11804.7042
+log Posterior update -25595.7144 ==&gt; -11785.8414
+log Posterior update -29972.0006 ==&gt; -11789.1326
+log Posterior update -25521.9957 ==&gt; -11772.959
+log Posterior update -29809.7217 ==&gt; -11780.6242
+log Posterior update -25530.4669 ==&gt; -11772.0726
+log Posterior update -29846.5202 ==&gt; -11784.3535
+log Posterior update -25627.7818 ==&gt; -11772.0543
+log Posterior update -29843.936 ==&gt; -11784.4857
+log Posterior update -25627.9244 ==&gt; -11772.1497
+log Posterior update -29843.949 ==&gt; -11784.5066
+log Posterior update -25627.9301 ==&gt; -11772.1536
+log Posterior update -29843.9495 ==&gt; -11784.5074
+log Posterior update -25627.9303 ==&gt; -11772.1538
+log Posterior update -29843.9495 ==&gt; -11784.5074
+log Posterior update -25627.9303 ==&gt; -11772.1538
+log Posterior update -29843.9495 ==&gt; -11784.5074
+log Posterior update -25627.9303 ==&gt; -11772.1538
+log Posterior update -29843.9495 ==&gt; -11784.5074
+log Posterior update -25627.9303 ==&gt; -11772.1538
+log Posterior update -29843.9495 ==&gt; -11784.5074
+log Posterior update -25627.9303 ==&gt; -11772.1538
+means 0.63722     0.52686     0.29551
+</pre><h2 id="4">Saving images for chosen beta</h2><pre class="codeinput">white_b = zeros(256,256);
+grey_b = zeros(256,256);
+csf_b = zeros(256,256);
+<span class="keyword">for</span> i=1:256
+        <span class="keyword">for</span> j=1:256
+            <span class="keyword">if</span> (mask(i,j)==0)
+                <span class="keyword">continue</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span>(X(i,j)==1)
+                white_b(i,j)=1;  <span class="comment">%white</span>
+                grey_b(i,j) = 0;
+                csf_b(i,j) = 0;
+            <span class="keyword">elseif</span>(X(i,j)==2)
+                white_b(i,j)=0;  <span class="comment">%grey</span>
+                grey_b(i,j) = 1;
+                csf_b(i,j) = 0;
+            <span class="keyword">else</span>
+                white_b(i,j)=0;  <span class="comment">%CSF</span>
+                grey_b(i,j) = 0;
+                csf_b(i,j) = 1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+joint_labels_b = [white_b,grey_b,csf_b];
+
+figure; imshow(imageData); title(<span class="string">'Original Image'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+figure; imshow(mem); title(<span class="string">'Class-Membership Image: Chosen beta'</span>);
+figure; imshow(joint_labels_b); title(<span class="string">'Optimal Label images (chosen beta): White, Grey, CSF'</span>);
+hold <span class="string">off</span>;
+cd <span class="string">../</span>;
+save(<span class="string">'results/original_image.mat'</span>,<span class="string">"imageData"</span>);
+save(<span class="string">'results/Memberships_beta.mat'</span>,<span class="string">"mem"</span>);
+save(<span class="string">'results/label_beta.mat'</span>,<span class="string">"X"</span>);
+cd <span class="string">code</span>;
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <h2 id="5">Initialization for beta = 0 (No MRF)</h2><pre class="codeinput">beta = 0;
+X = zeros(256,256);
+<span class="keyword">for</span> i=1:256
+        <span class="keyword">for</span> j=1:256
+            <span class="keyword">if</span> (mask(i,j)==0)
+                <span class="keyword">continue</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span>(Y(i,j)&lt;0.4)
+                X(i,j)=3;  <span class="comment">%CSF</span>
+            <span class="keyword">elseif</span>(Y(i,j)&gt;0.6)
+                X(i,j)=1;  <span class="comment">%White Matter</span>
+            <span class="keyword">else</span>
+                X(i,j)=2;  <span class="comment">%Grey Matter</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+vari = [1,1,1];
+mu = [0.638,0.524,0.290];
+</pre><h2 id="6">Iterations for beta = 0</h2><pre class="codeinput"><span class="keyword">for</span> i= 1:30
+    comb = Member(Y, X, mask, K, mu, vari, beta);
+    mem = comb.a;
+    X = comb.b;
+    post = [<span class="string">'log Posterior update '</span>,num2str(comb.c),<span class="string">' ==&gt; '</span>,num2str(comb.d)];
+    disp(post)
+    comb= Gauss_update(Y, mem, mask, K);
+    mu = comb.a;
+    vari = comb.b;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">log Posterior update -23408.3312 ==&gt; -23406.7762
+log Posterior update -33596.392 ==&gt; -33533.1302
+log Posterior update -33178.5308 ==&gt; -33170.843
+log Posterior update -32485.6583 ==&gt; -32482.1836
+log Posterior update -31466.6417 ==&gt; -31463.4569
+log Posterior update -30422.047 ==&gt; -30408.9475
+log Posterior update -29836.2211 ==&gt; -29810.5447
+log Posterior update -29831.7381 ==&gt; -29794.8099
+log Posterior update -30143.3151 ==&gt; -30082.1689
+log Posterior update -30378.3188 ==&gt; -30310.318
+log Posterior update -30423.6472 ==&gt; -30382.3408
+log Posterior update -30409.0449 ==&gt; -30398.7491
+log Posterior update -30398.6484 ==&gt; -30394.5091
+log Posterior update -30384.5159 ==&gt; -30382.8032
+log Posterior update -30369.3026 ==&gt; -30368.2898
+log Posterior update -30353.037 ==&gt; -30352.6017
+log Posterior update -30336.3856 ==&gt; -30336.1922
+log Posterior update -30319.1848 ==&gt; -30319.0917
+log Posterior update -30301.3716 ==&gt; -30301.3247
+log Posterior update -30282.9267 ==&gt; -30282.8979
+log Posterior update -30263.8062 ==&gt; -30263.7696
+log Posterior update -30243.9538 ==&gt; -30243.9153
+log Posterior update -30223.362 ==&gt; -30223.3319
+log Posterior update -30202.0585 ==&gt; -30202.0227
+log Posterior update -30180.0067 ==&gt; -30179.9669
+log Posterior update -30157.187 ==&gt; -30157.146
+log Posterior update -30133.5962 ==&gt; -30133.5654
+log Posterior update -30109.2724 ==&gt; -30109.2167
+log Posterior update -30084.1263 ==&gt; -30084.0847
+log Posterior update -30058.1865 ==&gt; -30058.1373
+</pre><h2 id="7">Saving images for beta = 0</h2><pre class="codeinput">white_0 = zeros(256,256);
+grey_0 = zeros(256,256);
+csf_0 = zeros(256,256);
+<span class="keyword">for</span> i=1:256
+        <span class="keyword">for</span> j=1:256
+            <span class="keyword">if</span> (mask(i,j)==0)
+                <span class="keyword">continue</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span>(X(i,j)==1)
+                white_0(i,j)=1;  <span class="comment">%white</span>
+                grey_0(i,j) = 0;
+                csf_0(i,j) = 0;
+            <span class="keyword">elseif</span>(X(i,j)==2)
+                white_0(i,j)=0;  <span class="comment">%grey</span>
+                grey_0(i,j) = 1;
+                csf_0(i,j) = 0;
+            <span class="keyword">else</span>
+                white_0(i,j)=0;  <span class="comment">%CSF</span>
+                grey_0(i,j) = 0;
+                csf_0(i,j) = 1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+joint_labels_0 = [white_0,grey_0,csf_0];
+
+figure; imshow(imageData); title(<span class="string">'Original Image'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+figure; imshow(mem); title(<span class="string">'Class-Membership Image: Zero beta'</span>);
+figure; imshow(joint_labels_0); title(<span class="string">'Optimal Label images (zero beta): White, Grey, CSF'</span>);
+
+cd <span class="string">../</span>;
+save(<span class="string">'results/Memberships_zero.mat'</span>,<span class="string">"mem"</span>);
+save(<span class="string">'results/label_zero.mat'</span>,<span class="string">"X"</span>);
+cd <span class="string">code</span>;
+</pre><img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+load('../data/assignmentSegmentBrainGmmEmMrf.mat');
+
+Y = imageData;
+mask = imageMask;
+K = 3;
+%% Initialization for chosen beta
+%(a) According to us, a beta of 10 gives a smooth, realistic segmentation
+beta = 10;
+
+%(b) The initial estimate is was made manually based on approximate values
+%of the different classes in the image. Position was not taken into
+%account. The regions were thus (0.6,1), [0.4,0.6], (0,0.4).
+X = zeros(256,256);
+for i=1:256
+        for j=1:256
+            if (mask(i,j)==0)
+                continue
+            end
+            if(Y(i,j)<0.4)
+                X(i,j)=3;  %CSF
+            elseif(Y(i,j)>0.6)
+                X(i,j)=1;  %White Matter
+            else
+                X(i,j)=2;  %Grey Matter
+            end
+        end
+end
+
+%(c) The variance has been initialised to 1, while the means have been
+%initialized based on some test runs done on the image
+vari = [1,1,1];
+mu = [0.64,0.52,0.29];
+
+%% Iterations for chosen beta
+for i= 1:30
+    comb = Member(Y, X, mask, K, mu, vari, beta);
+    mem = comb.a;
+    X = comb.b;
+    post = ['log Posterior update ',num2str(comb.c),' ==> ',num2str(comb.d)];
+    disp(post)
+    comb= Gauss_update(Y, mem, mask, K);
+    mu = comb.a;
+    vari = comb.b;
+end
+%Optimal class means for chosen beta-
+mean_display = ['means ',num2str(mu)];
+disp(mean_display);
+%% Saving images for chosen beta
+
+white_b = zeros(256,256);
+grey_b = zeros(256,256);
+csf_b = zeros(256,256);
+for i=1:256
+        for j=1:256
+            if (mask(i,j)==0)
+                continue
+            end
+            if(X(i,j)==1)
+                white_b(i,j)=1;  %white
+                grey_b(i,j) = 0;
+                csf_b(i,j) = 0;
+            elseif(X(i,j)==2)
+                white_b(i,j)=0;  %grey
+                grey_b(i,j) = 1;
+                csf_b(i,j) = 0;
+            else
+                white_b(i,j)=0;  %CSF
+                grey_b(i,j) = 0;
+                csf_b(i,j) = 1;
+            end
+        end
+end
+joint_labels_b = [white_b,grey_b,csf_b];
+
+figure; imshow(imageData); title('Original Image');colormap('jet');colorbar;
+figure; imshow(mem); title('Class-Membership Image: Chosen beta');
+figure; imshow(joint_labels_b); title('Optimal Label images (chosen beta): White, Grey, CSF');
+hold off;
+cd ../;
+save('results/original_image.mat',"imageData");
+save('results/Memberships_beta.mat',"mem");
+save('results/label_beta.mat',"X");
+cd code;
+%% Initialization for beta = 0 (No MRF)
+beta = 0;
+X = zeros(256,256);
+for i=1:256
+        for j=1:256
+            if (mask(i,j)==0)
+                continue
+            end
+            if(Y(i,j)<0.4)
+                X(i,j)=3;  %CSF
+            elseif(Y(i,j)>0.6)
+                X(i,j)=1;  %White Matter
+            else
+                X(i,j)=2;  %Grey Matter
+            end
+        end
+end
+vari = [1,1,1];
+mu = [0.638,0.524,0.290];
+
+%% Iterations for beta = 0
+for i= 1:30
+    comb = Member(Y, X, mask, K, mu, vari, beta);
+    mem = comb.a;
+    X = comb.b;
+    post = ['log Posterior update ',num2str(comb.c),' ==> ',num2str(comb.d)];
+    disp(post)
+    comb= Gauss_update(Y, mem, mask, K);
+    mu = comb.a;
+    vari = comb.b;
+end
+
+%% Saving images for beta = 0
+
+white_0 = zeros(256,256);
+grey_0 = zeros(256,256);
+csf_0 = zeros(256,256);
+for i=1:256
+        for j=1:256
+            if (mask(i,j)==0)
+                continue
+            end
+            if(X(i,j)==1)
+                white_0(i,j)=1;  %white
+                grey_0(i,j) = 0;
+                csf_0(i,j) = 0;
+            elseif(X(i,j)==2)
+                white_0(i,j)=0;  %grey
+                grey_0(i,j) = 1;
+                csf_0(i,j) = 0;
+            else
+                white_0(i,j)=0;  %CSF
+                grey_0(i,j) = 0;
+                csf_0(i,j) = 1;
+            end
+        end
+end
+joint_labels_0 = [white_0,grey_0,csf_0];
+
+figure; imshow(imageData); title('Original Image');colormap('jet');colorbar;
+figure; imshow(mem); title('Class-Membership Image: Zero beta');
+figure; imshow(joint_labels_0); title('Optimal Label images (zero beta): White, Grey, CSF');
+
+cd ../;
+save('results/Memberships_zero.mat',"mem");
+save('results/label_zero.mat',"X");
+cd code;
+##### SOURCE END #####
+--></body></html>

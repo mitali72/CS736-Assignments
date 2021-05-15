@@ -1,0 +1,968 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-04-10"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Loading The Data</a></li><li><a href="#2">(d) Visualizing The Data</a></li><li><a href="#3">(e) Mean Shape</a></li><li><a href="#4">(f) Principal Modes of Variation</a></li><li><a href="#5">Largest mode of variation</a></li><li><a href="#6">Second largest mode of variation</a></li><li><a href="#7">Third largest mode of variation</a></li><li><a href="#8">Largest mode of variation</a></li><li><a href="#9">Second largest mode of variation</a></li><li><a href="#10">Third largest mode of variation</a></li><li><a href="#11">(g) Plots of Aligned Pointsets, Means &amp; Principal Means of Variation</a></li><li><a href="#12">Saving the results</a></li></ul></div><h2 id="1">Loading The Data</h2><pre class="codeinput">clear;
+warning(<span class="string">'off'</span>,<span class="string">'all'</span>)
+warning
+load(<span class="string">'../data/ellipses2D.mat'</span>);
+</pre><pre class="codeoutput">All warnings have the state 'off'.
+</pre><h2 id="2">(d) Visualizing The Data</h2><pre class="codeinput">random_color = rand(numOfPointSets,3);
+data_fig = figure;
+
+<span class="keyword">for</span> k = 1:numOfPointSets
+
+    cur_set = pointSets(:, :, k);
+    x = cur_set(1, :);
+    y = cur_set(2, :);
+    s = scatter(x, y, <span class="string">'filled'</span>);
+    s.MarkerFaceColor = random_color(k,:);
+    hold <span class="string">on</span>
+
+<span class="keyword">end</span>
+
+hold <span class="string">off</span>
+save(<span class="string">'../results/data_fig.mat'</span>, <span class="string">'data_fig'</span>)
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <h2 id="3">(e) Mean Shape</h2><pre class="codeinput"><span class="comment">% Using Code11</span>
+[mean_shape,aligned_pointsets] = Code11(pointSets);
+
+mean_11_fig = figure;
+
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets(1,:,k),aligned_pointsets(2,:,k),<span class="string">'filled'</span>,<span class="string">'blue'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+plot(mean_shape(1,:),mean_shape(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+
+hold <span class="string">off</span>
+title(<span class="string">"Code11"</span>)
+save(<span class="string">'../results/mean_11_fig.mat'</span>,<span class="string">'mean_11_fig'</span>);
+
+<span class="comment">% Using Code22</span>
+
+[mean_shape,aligned_pointsets] = Code22(pointSets);
+
+mean_22_fig = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets(1,:,k),aligned_pointsets(2,:,k),<span class="string">'filled'</span>,<span class="string">'blue'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+plot(mean_shape(1,:),mean_shape(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+
+hold <span class="string">off</span>
+title(<span class="string">"Code22"</span>)
+save(<span class="string">'../results/mean_22_fig.mat'</span>,<span class="string">'mean_22_fig'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <h2 id="4">(f) Principal Modes of Variation</h2><pre class="codeinput"><span class="comment">% Using Code11</span>
+
+[mean_shape_11,aligned_pointsets_11] = Code11(pointSets);
+[vec, val, mean_vec] = Variation_modes(mean_shape_11,aligned_pointsets_11);
+vec_length = size(mean_shape_11, 2);
+</pre><h2 id="5">Largest mode of variation</h2><pre class="codeinput">var_11_plus_3 = mean_vec + 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_11_plus_2 = mean_vec + 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_11x_plus_3 = zeros(vec_length, 1);
+var_11y_plus_3 = zeros(vec_length, 1);
+
+var_11x_plus_2 = zeros(vec_length, 1);
+var_11y_plus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_11x_plus_3(i) = var_11_plus_3(2*i-1);
+    var_11y_plus_3(i) = var_11_plus_3(2*i);
+
+    var_11x_plus_2(i) = var_11_plus_2(2*i-1);
+    var_11y_plus_2(i) = var_11_plus_2(2*i);
+
+<span class="keyword">end</span>
+
+var_11_minus_3 = mean_vec - 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_11_minus_2 = mean_vec - 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_11x_minus_3 = zeros(vec_length, 1);
+var_11y_minus_3 = zeros(vec_length, 1);
+
+var_11x_minus_2 = zeros(vec_length, 1);
+var_11y_minus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_11x_minus_3(i) = var_11_minus_3(2*i-1);
+    var_11y_minus_3(i) = var_11_minus_3(2*i);
+
+    var_11x_minus_2(i) = var_11_minus_2(2*i-1);
+    var_11y_minus_2(i) = var_11_minus_2(2*i);
+
+<span class="keyword">end</span>
+</pre><h2 id="6">Second largest mode of variation</h2><pre class="codeinput">var_21_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_21_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_21x_plus_3 = zeros(vec_length, 1);
+var_21y_plus_3 = zeros(vec_length, 1);
+
+var_21x_plus_2 = zeros(vec_length, 1);
+var_21y_plus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_21x_plus_3(i) = var_21_plus_3(2*i-1);
+    var_21y_plus_3(i) = var_21_plus_3(2*i);
+
+    var_21x_plus_2(i) = var_21_plus_2(2*i-1);
+    var_21y_plus_2(i) = var_21_plus_2(2*i);
+
+<span class="keyword">end</span>
+
+var_21_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_21_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_21x_minus_3 = zeros(vec_length, 1);
+var_21y_minus_3 = zeros(vec_length, 1);
+
+var_21x_minus_2 = zeros(vec_length, 1);
+var_21y_minus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_21x_minus_3(i) = var_21_minus_3(2*i-1);
+    var_21y_minus_3(i) = var_21_minus_3(2*i);
+
+    var_21x_minus_2(i) = var_21_minus_2(2*i-1);
+    var_21y_minus_2(i) = var_21_minus_2(2*i);
+
+<span class="keyword">end</span>
+</pre><h2 id="7">Third largest mode of variation</h2><pre class="codeinput">var_31_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_31_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_31x_plus_3 = zeros(vec_length, 1);
+var_31y_plus_3 = zeros(vec_length, 1);
+
+var_31x_plus_2 = zeros(vec_length, 1);
+var_31y_plus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_31x_plus_3(i) = var_31_plus_3(2*i-1);
+    var_31y_plus_3(i) = var_31_plus_3(2*i);
+
+    var_31x_plus_2(i) = var_31_plus_2(2*i-1);
+    var_31y_plus_2(i) = var_31_plus_2(2*i);
+
+<span class="keyword">end</span>
+
+var_31_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_31_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_31x_minus_3 = zeros(vec_length, 1);
+var_31y_minus_3 = zeros(vec_length, 1);
+
+var_31x_minus_2 = zeros(vec_length, 1);
+var_31y_minus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_31x_minus_3(i) = var_31_minus_3(2*i-1);
+    var_31y_minus_3(i) = var_31_minus_3(2*i);
+
+    var_31x_minus_2(i) = var_31_minus_2(2*i-1);
+    var_31y_minus_2(i) = var_31_minus_2(2*i);
+
+<span class="keyword">end</span>
+
+eigenvalues11 = [val(2*vec_length), val(2*vec_length-1), val(2*vec_length-2)];
+figure;
+eig_11 = plot(eigenvalues11);
+title(<span class="string">"Code11: Principal eigenvalues"</span>);
+xlabel(<span class="string">"ith principal eigenvalue"</span>);
+ylabel(<span class="string">"eigenvalue"</span>);
+save(<span class="string">'../results/eig_11.mat'</span>,<span class="string">'eig_11'</span>);
+
+<span class="comment">% Using Code22</span>
+
+[mean_shape_22,aligned_pointsets_22] = Code22(pointSets);
+[vec, val, mean_vec] = Variation_modes(mean_shape_22,aligned_pointsets_22);
+vec_length = size(mean_shape_22, 2);
+</pre><h2 id="8">Largest mode of variation</h2><pre class="codeinput">var_12_plus_3 = mean_vec + 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_12_plus_2 = mean_vec + 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_12x_plus_3 = zeros(vec_length, 1);
+var_12y_plus_3 = zeros(vec_length, 1);
+
+var_12x_plus_2 = zeros(vec_length, 1);
+var_12y_plus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_12x_plus_3(i) = var_12_plus_3(2*i-1);
+    var_12y_plus_3(i) = var_12_plus_3(2*i);
+
+    var_12x_plus_2(i) = var_12_plus_2(2*i-1);
+    var_12y_plus_2(i) = var_12_plus_2(2*i);
+
+<span class="keyword">end</span>
+
+var_12_minus_3 = mean_vec - 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_12_minus_2 = mean_vec - 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_12x_minus_3 = zeros(vec_length, 1);
+var_12y_minus_3 = zeros(vec_length, 1);
+
+var_12x_minus_2 = zeros(vec_length, 1);
+var_12y_minus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_12x_minus_3(i) = var_12_minus_3(2*i-1);
+    var_12y_minus_3(i) = var_12_minus_3(2*i);
+
+    var_12x_minus_2(i) = var_12_minus_2(2*i-1);
+    var_12y_minus_2(i) = var_12_minus_2(2*i);
+
+<span class="keyword">end</span>
+</pre><h2 id="9">Second largest mode of variation</h2><pre class="codeinput">var_22_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_22_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_22x_plus_3 = zeros(vec_length, 1);
+var_22y_plus_3 = zeros(vec_length, 1);
+
+var_22x_plus_2 = zeros(vec_length, 1);
+var_22y_plus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_22x_plus_3(i) = var_22_plus_3(2*i-1);
+    var_22y_plus_3(i) = var_22_plus_3(2*i);
+
+    var_22x_plus_2(i) = var_22_plus_2(2*i-1);
+    var_22y_plus_2(i) = var_22_plus_2(2*i);
+
+<span class="keyword">end</span>
+
+var_22_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_22_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_22x_minus_3 = zeros(vec_length, 1);
+var_22y_minus_3 = zeros(vec_length, 1);
+
+var_22x_minus_2 = zeros(vec_length, 1);
+var_22y_minus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_22x_minus_3(i) = var_22_minus_3(2*i-1);
+    var_22y_minus_3(i) = var_22_minus_3(2*i);
+
+    var_22x_minus_2(i) = var_22_minus_2(2*i-1);
+    var_22y_minus_2(i) = var_22_minus_2(2*i);
+
+<span class="keyword">end</span>
+</pre><h2 id="10">Third largest mode of variation</h2><pre class="codeinput">var_32_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_32_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_32x_plus_3 = zeros(vec_length, 1);
+var_32y_plus_3 = zeros(vec_length, 1);
+
+var_32x_plus_2 = zeros(vec_length, 1);
+var_32y_plus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_32x_plus_3(i) = var_32_plus_3(2*i-1);
+    var_32y_plus_3(i) = var_32_plus_3(2*i);
+
+    var_32x_plus_2(i) = var_32_plus_2(2*i-1);
+    var_32y_plus_2(i) = var_32_plus_2(2*i);
+
+<span class="keyword">end</span>
+
+var_32_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_32_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_32x_minus_3 = zeros(vec_length, 1);
+var_32y_minus_3 = zeros(vec_length, 1);
+
+var_32x_minus_2 = zeros(vec_length, 1);
+var_32y_minus_2 = zeros(vec_length, 1);
+
+<span class="keyword">for</span> i = 1:vec_length
+
+    var_32x_minus_3(i) = var_32_minus_3(2*i-1);
+    var_32y_minus_3(i) = var_32_minus_3(2*i);
+
+    var_32x_minus_2(i) = var_32_minus_2(2*i-1);
+    var_32y_minus_2(i) = var_32_minus_2(2*i);
+
+<span class="keyword">end</span>
+
+eigenvalues22 = [val(2*vec_length), val(2*vec_length-1), val(2*vec_length-2)];
+figure;
+eig_22 = plot(eigenvalues22);
+title(<span class="string">"Code22: Principal eigenvalues"</span>);
+xlabel(<span class="string">"ith principal eigenvalue"</span>);
+ylabel(<span class="string">"eigenvalue"</span>);
+save(<span class="string">'../results/eig_11.mat'</span>,<span class="string">'eig_11'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <h2 id="11">(g) Plots of Aligned Pointsets, Means &amp; Principal Means of Variation</h2><pre class="codeinput"><span class="comment">% Code 1 Results</span>
+
+code11_sd1 = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets_11(1,:,k),aligned_pointsets_11(2,:,k),<span class="string">'filled'</span>,<span class="string">'y'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+h1 = plot(mean_shape_11(1,:),mean_shape_11(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+hold <span class="string">on</span>
+h2 = plot(var_11x_plus_3,var_11y_plus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+hold <span class="string">on</span>
+h3 = plot(var_11x_minus_3,var_11y_minus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_11x_plus_2,var_11y_plus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_11x_minus_2,var_11y_minus_2,'-or','MarkerFaceColor','black');</span>
+legend([h1,h2(1),h3(1)], <span class="string">'Code11: Mean Shape'</span>,<span class="string">'Code11: +3SD1'</span>,<span class="string">'Code11: -3SD1'</span>)
+save(<span class="string">'../results/code11_sd1.mat'</span>, <span class="string">'code11_sd1'</span>)
+
+code11_sd2 = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets_11(1,:,k),aligned_pointsets_11(2,:,k),<span class="string">'filled'</span>,<span class="string">'y'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+h1 = plot(mean_shape_11(1,:),mean_shape_11(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+hold <span class="string">on</span>
+h2 = plot(var_21x_plus_3,var_21y_plus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+hold <span class="string">on</span>
+h3 = plot(var_21x_minus_3,var_21y_minus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_21x_plus_3,var_21y_plus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_21x_minus_3,var_21y_minus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% title("var21")</span>
+legend([h1,h2(1),h3(1)], <span class="string">'Code11: Mean Shape'</span>,<span class="string">'Code11: +3SD2'</span>,<span class="string">'Code11: -3SD2'</span>)
+save(<span class="string">'../results/code11_sd2.mat'</span>, <span class="string">'code11_sd2'</span>)
+
+code11_sd3 = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets_11(1,:,k),aligned_pointsets_11(2,:,k),<span class="string">'filled'</span>,<span class="string">'y'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+h1 = plot(mean_shape_11(1,:),mean_shape_11(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+hold <span class="string">on</span>
+h2 = plot(var_31x_plus_3,var_31y_plus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+hold <span class="string">on</span>
+h3 = plot(var_31x_minus_3,var_31y_minus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_31x_plus_2,var_31y_plus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_31x_minus_2,var_31y_minus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% title("var31")</span>
+legend([h1,h2(1),h3(1)], <span class="string">'Code11: Mean Shape'</span>,<span class="string">'Code11: +3SD3'</span>,<span class="string">'Code11: -3SD3'</span>)
+save(<span class="string">'../results/code11_sd3.mat'</span>, <span class="string">'code11_sd3'</span>)
+
+
+<span class="comment">% Code 2 Results</span>
+
+code22_sd1 = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets_22(1,:,k),aligned_pointsets_22(2,:,k),<span class="string">'filled'</span>,<span class="string">'y'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+h1 = plot(mean_shape_22(1,:),mean_shape_22(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+hold <span class="string">on</span>
+h2 = plot(var_12x_plus_3,var_12y_plus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+hold <span class="string">on</span>
+h3 = plot(var_12x_minus_3,var_12y_minus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_12x_plus_2,var_12y_plus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_12x_minus_2,var_12y_minus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% title("var12")</span>
+legend([h1,h2(1),h3(1)], <span class="string">'Code22: Mean Shape'</span>,<span class="string">'Code22: +3SD1'</span>,<span class="string">'Code22: -3SD1'</span>)
+save(<span class="string">'../results/code22_sd1.mat'</span>, <span class="string">'code22_sd1'</span>)
+
+code22_sd2 = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets_22(1,:,k),aligned_pointsets_22(2,:,k),<span class="string">'filled'</span>,<span class="string">'y'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+h1 = plot(mean_shape_22(1,:),mean_shape_22(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+hold <span class="string">on</span>
+h2 = plot(var_22x_plus_3,var_22y_plus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+hold <span class="string">on</span>
+h3 = plot(var_22x_minus_3,var_22y_minus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_22x_plus_2,var_22y_plus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_22x_minus_2,var_22y_minus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% title("var22")</span>
+legend([h1,h2(1),h3(1)], <span class="string">'Code22: Mean Shape'</span>,<span class="string">'Code22: +3SD2'</span>,<span class="string">'Code22: -3SD2'</span>)
+save(<span class="string">'../results/code22_sd2.mat'</span>, <span class="string">'code22_sd2'</span>)
+
+code22_sd3 = figure;
+<span class="keyword">for</span> k = 1:numOfPointSets
+    scatter(aligned_pointsets_22(1,:,k),aligned_pointsets_22(2,:,k),<span class="string">'filled'</span>,<span class="string">'y'</span>);
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+
+h1 = plot(mean_shape_22(1,:),mean_shape_22(2,:),<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'r'</span>);
+hold <span class="string">on</span>
+h2 = plot(var_32x_plus_3,var_32y_plus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+hold <span class="string">on</span>
+h3 = plot(var_32x_minus_3,var_32y_minus_3,<span class="string">'-or'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'b'</span>);
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_32x_plus_2,var_32y_plus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% hold on</span>
+<span class="comment">% plot(var_32x_minus_2,var_32y_minus_2,'-or','MarkerFaceColor','black');</span>
+<span class="comment">% title("var32")</span>
+legend([h1,h2(1),h3(1)], <span class="string">'Code22: Mean Shape'</span>,<span class="string">'Code22: +3SD3'</span>,<span class="string">'Code22: -3SD3'</span>)
+save(<span class="string">'../results/code22_sd3.mat'</span>, <span class="string">'code22_sd3'</span>)
+</pre><h2 id="12">Saving the results</h2><pre class="codeinput">save(<span class="string">'../results/aligned_pointsets11.mat'</span>,<span class="string">"aligned_pointsets_11"</span>);
+save(<span class="string">'../results/aligned_pointsets22.mat'</span>,<span class="string">"aligned_pointsets_22"</span>);
+save(<span class="string">'../results/mean_shape_11.mat'</span>,<span class="string">"mean_shape_11"</span>);
+save(<span class="string">'../results/mean_shape_22.mat'</span>,<span class="string">"mean_shape_22"</span>);
+save(<span class="string">'../results/var_11_plus_3.mat'</span>,<span class="string">"var_11_plus_3"</span>);
+save(<span class="string">'../results/var_21_plus_3.mat'</span>,<span class="string">"var_21_plus_3"</span>);
+save(<span class="string">'../results/var_31_plus_3.mat'</span>,<span class="string">"var_31_plus_3"</span>);
+save(<span class="string">'../results/var_11_minus_3.mat'</span>,<span class="string">"var_11_minus_3"</span>);
+save(<span class="string">'../results/var_21_minus_3.mat'</span>,<span class="string">"var_21_minus_3"</span>);
+save(<span class="string">'../results/var_31_minus_3.mat'</span>,<span class="string">"var_31_minus_3"</span>);
+save(<span class="string">'../results/var_12_plus_3.mat'</span>,<span class="string">"var_12_plus_3"</span>);
+save(<span class="string">'../results/var_22_plus_3.mat'</span>,<span class="string">"var_22_plus_3"</span>);
+save(<span class="string">'../results/var_32_plus_3.mat'</span>,<span class="string">"var_32_plus_3"</span>);
+save(<span class="string">'../results/var_12_minus_3.mat'</span>,<span class="string">"var_12_minus_3"</span>);
+save(<span class="string">'../results/var_22_minus_3.mat'</span>,<span class="string">"var_22_minus_3"</span>);
+save(<span class="string">'../results/var_32_minus_3.mat'</span>,<span class="string">"var_32_minus_3"</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Loading The Data
+clear;
+warning('off','all')
+warning
+load('../data/ellipses2D.mat');
+
+%% (d) Visualizing The Data
+
+random_color = rand(numOfPointSets,3);
+data_fig = figure;
+
+for k = 1:numOfPointSets
+    
+    cur_set = pointSets(:, :, k);
+    x = cur_set(1, :);
+    y = cur_set(2, :);
+    s = scatter(x, y, 'filled');
+    s.MarkerFaceColor = random_color(k,:);
+    hold on
+    
+end
+
+hold off
+save('../results/data_fig.mat', 'data_fig')
+
+%% (e) Mean Shape
+
+% Using Code11
+[mean_shape,aligned_pointsets] = Code11(pointSets);
+
+mean_11_fig = figure;
+
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets(1,:,k),aligned_pointsets(2,:,k),'filled','blue');
+    hold on
+end
+
+plot(mean_shape(1,:),mean_shape(2,:),'-or','MarkerFaceColor','r');
+
+hold off
+title("Code11")
+save('../results/mean_11_fig.mat','mean_11_fig');
+
+% Using Code22
+
+[mean_shape,aligned_pointsets] = Code22(pointSets);
+
+mean_22_fig = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets(1,:,k),aligned_pointsets(2,:,k),'filled','blue');
+    hold on
+end
+
+plot(mean_shape(1,:),mean_shape(2,:),'-or','MarkerFaceColor','r');
+
+hold off
+title("Code22")
+save('../results/mean_22_fig.mat','mean_22_fig');
+
+%% (f) Principal Modes of Variation
+
+% Using Code11
+
+[mean_shape_11,aligned_pointsets_11] = Code11(pointSets);
+[vec, val, mean_vec] = Variation_modes(mean_shape_11,aligned_pointsets_11);
+vec_length = size(mean_shape_11, 2);
+
+%%% Largest mode of variation
+var_11_plus_3 = mean_vec + 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_11_plus_2 = mean_vec + 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_11x_plus_3 = zeros(vec_length, 1);
+var_11y_plus_3 = zeros(vec_length, 1);
+
+var_11x_plus_2 = zeros(vec_length, 1);
+var_11y_plus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_11x_plus_3(i) = var_11_plus_3(2*i-1);
+    var_11y_plus_3(i) = var_11_plus_3(2*i);
+    
+    var_11x_plus_2(i) = var_11_plus_2(2*i-1);
+    var_11y_plus_2(i) = var_11_plus_2(2*i);
+    
+end
+ 
+var_11_minus_3 = mean_vec - 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_11_minus_2 = mean_vec - 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_11x_minus_3 = zeros(vec_length, 1);
+var_11y_minus_3 = zeros(vec_length, 1);
+
+var_11x_minus_2 = zeros(vec_length, 1);
+var_11y_minus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_11x_minus_3(i) = var_11_minus_3(2*i-1);
+    var_11y_minus_3(i) = var_11_minus_3(2*i);
+    
+    var_11x_minus_2(i) = var_11_minus_2(2*i-1);
+    var_11y_minus_2(i) = var_11_minus_2(2*i);
+    
+end
+
+%%% Second largest mode of variation
+var_21_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_21_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_21x_plus_3 = zeros(vec_length, 1);
+var_21y_plus_3 = zeros(vec_length, 1);
+
+var_21x_plus_2 = zeros(vec_length, 1);
+var_21y_plus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_21x_plus_3(i) = var_21_plus_3(2*i-1);
+    var_21y_plus_3(i) = var_21_plus_3(2*i);
+    
+    var_21x_plus_2(i) = var_21_plus_2(2*i-1);
+    var_21y_plus_2(i) = var_21_plus_2(2*i);
+    
+end
+
+var_21_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_21_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_21x_minus_3 = zeros(vec_length, 1);
+var_21y_minus_3 = zeros(vec_length, 1);
+
+var_21x_minus_2 = zeros(vec_length, 1);
+var_21y_minus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_21x_minus_3(i) = var_21_minus_3(2*i-1);
+    var_21y_minus_3(i) = var_21_minus_3(2*i);
+    
+    var_21x_minus_2(i) = var_21_minus_2(2*i-1);
+    var_21y_minus_2(i) = var_21_minus_2(2*i);
+    
+end
+
+%%% Third largest mode of variation
+var_31_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_31_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_31x_plus_3 = zeros(vec_length, 1);
+var_31y_plus_3 = zeros(vec_length, 1);
+
+var_31x_plus_2 = zeros(vec_length, 1);
+var_31y_plus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_31x_plus_3(i) = var_31_plus_3(2*i-1);
+    var_31y_plus_3(i) = var_31_plus_3(2*i);
+    
+    var_31x_plus_2(i) = var_31_plus_2(2*i-1);
+    var_31y_plus_2(i) = var_31_plus_2(2*i);
+    
+end
+
+var_31_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_31_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_31x_minus_3 = zeros(vec_length, 1);
+var_31y_minus_3 = zeros(vec_length, 1);
+
+var_31x_minus_2 = zeros(vec_length, 1);
+var_31y_minus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_31x_minus_3(i) = var_31_minus_3(2*i-1);
+    var_31y_minus_3(i) = var_31_minus_3(2*i);
+    
+    var_31x_minus_2(i) = var_31_minus_2(2*i-1);
+    var_31y_minus_2(i) = var_31_minus_2(2*i);
+    
+end
+
+eigenvalues11 = [val(2*vec_length), val(2*vec_length-1), val(2*vec_length-2)];
+figure;
+eig_11 = plot(eigenvalues11);
+title("Code11: Principal eigenvalues");
+xlabel("ith principal eigenvalue");
+ylabel("eigenvalue");
+save('../results/eig_11.mat','eig_11');
+
+% Using Code22
+
+[mean_shape_22,aligned_pointsets_22] = Code22(pointSets);
+[vec, val, mean_vec] = Variation_modes(mean_shape_22,aligned_pointsets_22);
+vec_length = size(mean_shape_22, 2);
+
+%%% Largest mode of variation
+var_12_plus_3 = mean_vec + 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_12_plus_2 = mean_vec + 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_12x_plus_3 = zeros(vec_length, 1);
+var_12y_plus_3 = zeros(vec_length, 1);
+
+var_12x_plus_2 = zeros(vec_length, 1);
+var_12y_plus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_12x_plus_3(i) = var_12_plus_3(2*i-1);
+    var_12y_plus_3(i) = var_12_plus_3(2*i);
+    
+    var_12x_plus_2(i) = var_12_plus_2(2*i-1);
+    var_12y_plus_2(i) = var_12_plus_2(2*i);
+    
+end
+ 
+var_12_minus_3 = mean_vec - 3*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+var_12_minus_2 = mean_vec - 2*sqrt(val(2*vec_length))*vec(:,2*vec_length);
+
+var_12x_minus_3 = zeros(vec_length, 1);
+var_12y_minus_3 = zeros(vec_length, 1);
+
+var_12x_minus_2 = zeros(vec_length, 1);
+var_12y_minus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_12x_minus_3(i) = var_12_minus_3(2*i-1);
+    var_12y_minus_3(i) = var_12_minus_3(2*i);
+    
+    var_12x_minus_2(i) = var_12_minus_2(2*i-1);
+    var_12y_minus_2(i) = var_12_minus_2(2*i);
+    
+end
+
+%%% Second largest mode of variation
+var_22_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_22_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_22x_plus_3 = zeros(vec_length, 1);
+var_22y_plus_3 = zeros(vec_length, 1);
+
+var_22x_plus_2 = zeros(vec_length, 1);
+var_22y_plus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_22x_plus_3(i) = var_22_plus_3(2*i-1);
+    var_22y_plus_3(i) = var_22_plus_3(2*i);
+    
+    var_22x_plus_2(i) = var_22_plus_2(2*i-1);
+    var_22y_plus_2(i) = var_22_plus_2(2*i);
+    
+end
+
+var_22_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+var_22_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-1))*vec(:,2*vec_length-1);
+
+var_22x_minus_3 = zeros(vec_length, 1);
+var_22y_minus_3 = zeros(vec_length, 1);
+
+var_22x_minus_2 = zeros(vec_length, 1);
+var_22y_minus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_22x_minus_3(i) = var_22_minus_3(2*i-1);
+    var_22y_minus_3(i) = var_22_minus_3(2*i);
+    
+    var_22x_minus_2(i) = var_22_minus_2(2*i-1);
+    var_22y_minus_2(i) = var_22_minus_2(2*i);
+    
+end
+
+%%% Third largest mode of variation
+var_32_plus_3 = mean_vec + 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_32_plus_2 = mean_vec + 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_32x_plus_3 = zeros(vec_length, 1);
+var_32y_plus_3 = zeros(vec_length, 1);
+
+var_32x_plus_2 = zeros(vec_length, 1);
+var_32y_plus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_32x_plus_3(i) = var_32_plus_3(2*i-1);
+    var_32y_plus_3(i) = var_32_plus_3(2*i);
+    
+    var_32x_plus_2(i) = var_32_plus_2(2*i-1);
+    var_32y_plus_2(i) = var_32_plus_2(2*i);
+    
+end
+
+var_32_minus_3 = mean_vec - 3*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+var_32_minus_2 = mean_vec - 2*sqrt(val(2*vec_length-2))*vec(:,2*vec_length-2);
+
+var_32x_minus_3 = zeros(vec_length, 1);
+var_32y_minus_3 = zeros(vec_length, 1);
+
+var_32x_minus_2 = zeros(vec_length, 1);
+var_32y_minus_2 = zeros(vec_length, 1);
+
+for i = 1:vec_length
+    
+    var_32x_minus_3(i) = var_32_minus_3(2*i-1);
+    var_32y_minus_3(i) = var_32_minus_3(2*i);
+    
+    var_32x_minus_2(i) = var_32_minus_2(2*i-1);
+    var_32y_minus_2(i) = var_32_minus_2(2*i);
+    
+end
+
+eigenvalues22 = [val(2*vec_length), val(2*vec_length-1), val(2*vec_length-2)];
+figure;
+eig_22 = plot(eigenvalues22);
+title("Code22: Principal eigenvalues");
+xlabel("ith principal eigenvalue");
+ylabel("eigenvalue");
+save('../results/eig_11.mat','eig_11');
+
+%% (g) Plots of Aligned Pointsets, Means & Principal Means of Variation
+
+% Code 1 Results
+
+code11_sd1 = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets_11(1,:,k),aligned_pointsets_11(2,:,k),'filled','y');
+    hold on
+end
+
+h1 = plot(mean_shape_11(1,:),mean_shape_11(2,:),'-or','MarkerFaceColor','r');
+hold on
+h2 = plot(var_11x_plus_3,var_11y_plus_3,'-or','MarkerFaceColor','g');
+hold on
+h3 = plot(var_11x_minus_3,var_11y_minus_3,'-or','MarkerFaceColor','b');
+% hold on
+% plot(var_11x_plus_2,var_11y_plus_2,'-or','MarkerFaceColor','black');
+% hold on
+% plot(var_11x_minus_2,var_11y_minus_2,'-or','MarkerFaceColor','black');
+legend([h1,h2(1),h3(1)], 'Code11: Mean Shape','Code11: +3SD1','Code11: -3SD1')
+save('../results/code11_sd1.mat', 'code11_sd1')
+
+code11_sd2 = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets_11(1,:,k),aligned_pointsets_11(2,:,k),'filled','y');
+    hold on
+end
+
+h1 = plot(mean_shape_11(1,:),mean_shape_11(2,:),'-or','MarkerFaceColor','r');
+hold on
+h2 = plot(var_21x_plus_3,var_21y_plus_3,'-or','MarkerFaceColor','g');
+hold on
+h3 = plot(var_21x_minus_3,var_21y_minus_3,'-or','MarkerFaceColor','b');
+% hold on
+% plot(var_21x_plus_3,var_21y_plus_2,'-or','MarkerFaceColor','black');
+% hold on
+% plot(var_21x_minus_3,var_21y_minus_2,'-or','MarkerFaceColor','black');
+% title("var21")
+legend([h1,h2(1),h3(1)], 'Code11: Mean Shape','Code11: +3SD2','Code11: -3SD2')
+save('../results/code11_sd2.mat', 'code11_sd2')
+
+code11_sd3 = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets_11(1,:,k),aligned_pointsets_11(2,:,k),'filled','y');
+    hold on
+end
+
+h1 = plot(mean_shape_11(1,:),mean_shape_11(2,:),'-or','MarkerFaceColor','r');
+hold on
+h2 = plot(var_31x_plus_3,var_31y_plus_3,'-or','MarkerFaceColor','g');
+hold on
+h3 = plot(var_31x_minus_3,var_31y_minus_3,'-or','MarkerFaceColor','b');
+% hold on
+% plot(var_31x_plus_2,var_31y_plus_2,'-or','MarkerFaceColor','black');
+% hold on
+% plot(var_31x_minus_2,var_31y_minus_2,'-or','MarkerFaceColor','black');
+% title("var31")
+legend([h1,h2(1),h3(1)], 'Code11: Mean Shape','Code11: +3SD3','Code11: -3SD3')
+save('../results/code11_sd3.mat', 'code11_sd3')
+
+
+% Code 2 Results
+
+code22_sd1 = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets_22(1,:,k),aligned_pointsets_22(2,:,k),'filled','y');
+    hold on
+end
+
+h1 = plot(mean_shape_22(1,:),mean_shape_22(2,:),'-or','MarkerFaceColor','r');
+hold on
+h2 = plot(var_12x_plus_3,var_12y_plus_3,'-or','MarkerFaceColor','g');
+hold on
+h3 = plot(var_12x_minus_3,var_12y_minus_3,'-or','MarkerFaceColor','b');
+% hold on
+% plot(var_12x_plus_2,var_12y_plus_2,'-or','MarkerFaceColor','black');
+% hold on
+% plot(var_12x_minus_2,var_12y_minus_2,'-or','MarkerFaceColor','black');
+% title("var12")
+legend([h1,h2(1),h3(1)], 'Code22: Mean Shape','Code22: +3SD1','Code22: -3SD1')
+save('../results/code22_sd1.mat', 'code22_sd1')
+
+code22_sd2 = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets_22(1,:,k),aligned_pointsets_22(2,:,k),'filled','y');
+    hold on
+end
+
+h1 = plot(mean_shape_22(1,:),mean_shape_22(2,:),'-or','MarkerFaceColor','r');
+hold on
+h2 = plot(var_22x_plus_3,var_22y_plus_3,'-or','MarkerFaceColor','g');
+hold on
+h3 = plot(var_22x_minus_3,var_22y_minus_3,'-or','MarkerFaceColor','b');
+% hold on
+% plot(var_22x_plus_2,var_22y_plus_2,'-or','MarkerFaceColor','black');
+% hold on
+% plot(var_22x_minus_2,var_22y_minus_2,'-or','MarkerFaceColor','black');
+% title("var22")
+legend([h1,h2(1),h3(1)], 'Code22: Mean Shape','Code22: +3SD2','Code22: -3SD2')
+save('../results/code22_sd2.mat', 'code22_sd2')
+
+code22_sd3 = figure;
+for k = 1:numOfPointSets
+    scatter(aligned_pointsets_22(1,:,k),aligned_pointsets_22(2,:,k),'filled','y');
+    hold on
+end
+
+h1 = plot(mean_shape_22(1,:),mean_shape_22(2,:),'-or','MarkerFaceColor','r');
+hold on
+h2 = plot(var_32x_plus_3,var_32y_plus_3,'-or','MarkerFaceColor','g');
+hold on
+h3 = plot(var_32x_minus_3,var_32y_minus_3,'-or','MarkerFaceColor','b');
+% hold on
+% plot(var_32x_plus_2,var_32y_plus_2,'-or','MarkerFaceColor','black');
+% hold on
+% plot(var_32x_minus_2,var_32y_minus_2,'-or','MarkerFaceColor','black');
+% title("var32")
+legend([h1,h2(1),h3(1)], 'Code22: Mean Shape','Code22: +3SD3','Code22: -3SD3')
+save('../results/code22_sd3.mat', 'code22_sd3')
+
+%%% Saving the results
+save('../results/aligned_pointsets11.mat',"aligned_pointsets_11");
+save('../results/aligned_pointsets22.mat',"aligned_pointsets_22");
+save('../results/mean_shape_11.mat',"mean_shape_11");
+save('../results/mean_shape_22.mat',"mean_shape_22");
+save('../results/var_11_plus_3.mat',"var_11_plus_3");
+save('../results/var_21_plus_3.mat',"var_21_plus_3");
+save('../results/var_31_plus_3.mat',"var_31_plus_3");
+save('../results/var_11_minus_3.mat',"var_11_minus_3");
+save('../results/var_21_minus_3.mat',"var_21_minus_3");
+save('../results/var_31_minus_3.mat',"var_31_minus_3");
+save('../results/var_12_plus_3.mat',"var_12_plus_3");
+save('../results/var_22_plus_3.mat',"var_22_plus_3");
+save('../results/var_32_plus_3.mat',"var_32_plus_3");
+save('../results/var_12_minus_3.mat',"var_12_minus_3");
+save('../results/var_22_minus_3.mat',"var_22_minus_3");
+save('../results/var_32_minus_3.mat',"var_32_minus_3");
+
+##### SOURCE END #####
+--></body></html>

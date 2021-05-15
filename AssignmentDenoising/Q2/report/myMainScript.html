@@ -1,0 +1,311 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-02-06"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Part A</a></li><li><a href="#3">Part B</a></li><li><a href="#4">MRF prior: Quadratic function</a></li><li><a href="#6">MRF prior: Discontinuity-adaptive Huber function</a></li><li><a href="#8">MRF prior:  MRF prior: Discontinuity-adaptive function</a></li><li><a href="#9">Part C</a></li><li><a href="#10">Part D</a></li><li><a href="#11">Objective Function (negative log likelihood) vs iterations</a></li></ul></div><pre class="codeinput">load(<span class="string">'../data/brainMRIslice.mat'</span>);
+
+Y = brainMRIsliceNoisy;
+Noiseless = brainMRIsliceOrig;
+</pre><h2 id="2">Part A</h2><pre class="codeinput">rrmse = RRMSE(Noiseless,Y);
+disp(rrmse);
+</pre><pre class="codeoutput">    0.1424
+
+</pre><h2 id="3">Part B</h2><h2 id="4">MRF prior: Quadratic function</h2><pre class="codeinput">best_alpha = 0.997;
+<span class="comment">%RMSE at optimum value of alpha</span>
+[denoised_quad,obj_quad] = Gradient_Descent(Y,best_alpha,0,<span class="string">"Quadratic"</span>,1);
+rrmse = RRMSE(Noiseless,denoised_quad);
+disp(rrmse);
+
+<span class="comment">%RMSE at alpha = 1 (since 1.2*a is &gt;1 and out of range)</span>
+[denoised,~] = Gradient_Descent(Y,1,0,<span class="string">"Quadratic"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (0.8a)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha*0.8,0,<span class="string">"Quadratic"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+</pre><pre class="codeoutput">    0.2259
+
+    0.2261
+
+    0.4872
+
+</pre><h2 id="6">MRF prior: Discontinuity-adaptive Huber function</h2><pre class="codeinput">best_alpha = 1;
+best_gamma = 0.00017;
+<span class="comment">%RMSE at (a*,b*)</span>
+[denoised_huber,obj_huber] = Gradient_Descent(Y,best_alpha,best_gamma,<span class="string">"Huber"</span>,1);
+rrmse = RRMSE(Noiseless,denoised_huber);
+disp(rrmse);
+
+<span class="comment">%RMSE at (1,b*) since 0&lt;=a&lt;=1</span>
+[denoised,~] = Gradient_Descent(Y,1,best_gamma,<span class="string">"Huber"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (0.8a,b*)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha*0.8,best_gamma,<span class="string">"Huber"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (a,1.2b*)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*1.2,<span class="string">"Huber"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (a,0.8b*)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*0.8,<span class="string">"Huber"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+</pre><pre class="codeoutput">    0.1426
+
+    0.1426
+
+    0.9995
+
+    0.1432
+
+    0.1428
+
+</pre><h2 id="8">MRF prior:  MRF prior: Discontinuity-adaptive function</h2><pre class="codeinput">best_alpha = 1;
+best_gamma = 0.000165;
+<span class="comment">%RMSE at (a*,b*)</span>
+[denoised_adap,obj_adap] = Gradient_Descent(Y,best_alpha,best_gamma,<span class="string">"Adaptive"</span>,1);
+rrmse = RRMSE(Noiseless,denoised_huber);
+disp(rrmse);
+
+<span class="comment">%RMSE at (1,b*) since 0&lt;=a&lt;=1</span>
+[denoised,~] = Gradient_Descent(Y,1,best_gamma,<span class="string">"Adaptive"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (0.8a,b*)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha*0.8,best_gamma,<span class="string">"Adaptive"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (a,1.2b*)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*1.2,<span class="string">"Adaptive"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+<span class="comment">%RMSE at (a,0.8b*)</span>
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*0.8,<span class="string">"Adaptive"</span>,0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+</pre><pre class="codeoutput">    0.1426
+
+    0.1483
+
+    0.9997
+
+    0.1490
+
+    0.1485
+
+</pre><h2 id="9">Part C</h2><pre class="codeinput">figure; imshow(Noiseless); title(<span class="string">'Noiseless Image'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+figure; imshow(Y); title(<span class="string">'Noisy Image'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+figure; imshow(denoised_quad); title(<span class="string">'Image denoised using quadratic prior'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+figure; imshow(denoised_huber); title(<span class="string">'Image denoised using Huber prior'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+figure; imshow(denoised_adap); title(<span class="string">'Image denoised using discontinuity-adaptive prior'</span>);colormap(<span class="string">'jet'</span>);colorbar;
+
+cd <span class="string">assignmentImageDenoising/</span>;
+save(<span class="string">'results/denoised_quad.mat'</span>,<span class="string">"denoised_quad"</span>);
+save(<span class="string">'results/denoised_adap.mat'</span>,<span class="string">"denoised_adap"</span>);
+save(<span class="string">'results/denoised_huber.mat'</span>,<span class="string">"denoised_huber"</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <h2 id="10">Part D</h2><h2 id="11">Objective Function (negative log likelihood) vs iterations</h2><pre class="codeinput">figure; plot(obj_quad); title(<span class="string">'Quadratic penalty'</span>); xlabel(<span class="string">'iterations'</span>); ylabel(<span class="string">'Objective function'</span>);
+figure; plot(obj_huber); title(<span class="string">'Huber penalty'</span>); xlabel(<span class="string">'iterations'</span>); ylabel(<span class="string">'Objective function'</span>);
+figure; plot(obj_adap); title(<span class="string">'Discontinuity Adaptive penalty'</span>); xlabel(<span class="string">'iterations'</span>); ylabel(<span class="string">'Objective function'</span>);
+
+
+
+save(<span class="string">'results/obj_quad.mat'</span>,<span class="string">"obj_quad"</span>);
+save(<span class="string">'results/obj_huber.mat'</span>,<span class="string">"obj_huber"</span>);
+save(<span class="string">'results/obj_adap.mat'</span>,<span class="string">"obj_adap"</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+load('../data/brainMRIslice.mat');
+
+Y = brainMRIsliceNoisy;
+Noiseless = brainMRIsliceOrig;
+
+%% Part A
+
+rrmse = RRMSE(Noiseless,Y);
+disp(rrmse);
+
+%% Part B
+
+%%% MRF prior: Quadratic function
+
+best_alpha = 0.997;
+%RMSE at optimum value of alpha
+[denoised_quad,obj_quad] = Gradient_Descent(Y,best_alpha,0,"Quadratic",1);
+rrmse = RRMSE(Noiseless,denoised_quad);
+disp(rrmse);
+
+%RMSE at alpha = 1 (since 1.2*a is >1 and out of range)
+[denoised,~] = Gradient_Descent(Y,1,0,"Quadratic",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (0.8a) 
+[denoised,~] = Gradient_Descent(Y,best_alpha*0.8,0,"Quadratic",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+%%
+%%% MRF prior: Discontinuity-adaptive Huber function
+
+best_alpha = 1;
+best_gamma = 0.00017;
+%RMSE at (a*,b*)
+[denoised_huber,obj_huber] = Gradient_Descent(Y,best_alpha,best_gamma,"Huber",1);
+rrmse = RRMSE(Noiseless,denoised_huber);
+disp(rrmse);
+
+%RMSE at (1,b*) since 0<=a<=1
+[denoised,~] = Gradient_Descent(Y,1,best_gamma,"Huber",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (0.8a,b*) 
+[denoised,~] = Gradient_Descent(Y,best_alpha*0.8,best_gamma,"Huber",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (a,1.2b*) 
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*1.2,"Huber",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (a,0.8b*) 
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*0.8,"Huber",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+%%
+%%% MRF prior:  MRF prior: Discontinuity-adaptive function
+
+best_alpha = 1;
+best_gamma = 0.000165;
+%RMSE at (a*,b*)
+[denoised_adap,obj_adap] = Gradient_Descent(Y,best_alpha,best_gamma,"Adaptive",1);
+rrmse = RRMSE(Noiseless,denoised_huber);
+disp(rrmse);
+
+%RMSE at (1,b*) since 0<=a<=1
+[denoised,~] = Gradient_Descent(Y,1,best_gamma,"Adaptive",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (0.8a,b*) 
+[denoised,~] = Gradient_Descent(Y,best_alpha*0.8,best_gamma,"Adaptive",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (a,1.2b*) 
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*1.2,"Adaptive",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+%RMSE at (a,0.8b*) 
+[denoised,~] = Gradient_Descent(Y,best_alpha,best_gamma*0.8,"Adaptive",0);
+rrmse = RRMSE(Noiseless,denoised);
+disp(rrmse);
+
+
+%% Part C
+
+figure; imshow(Noiseless); title('Noiseless Image');colormap('jet');colorbar;
+figure; imshow(Y); title('Noisy Image');colormap('jet');colorbar;
+figure; imshow(denoised_quad); title('Image denoised using quadratic prior');colormap('jet');colorbar;
+figure; imshow(denoised_huber); title('Image denoised using Huber prior');colormap('jet');colorbar;
+figure; imshow(denoised_adap); title('Image denoised using discontinuity-adaptive prior');colormap('jet');colorbar;
+
+cd assignmentImageDenoising/;
+save('results/denoised_quad.mat',"denoised_quad");
+save('results/denoised_adap.mat',"denoised_adap");
+save('results/denoised_huber.mat',"denoised_huber");
+
+
+
+%% Part D
+%%% Objective Function (negative log likelihood) vs iterations
+figure; plot(obj_quad); title('Quadratic penalty'); xlabel('iterations'); ylabel('Objective function');
+figure; plot(obj_huber); title('Huber penalty'); xlabel('iterations'); ylabel('Objective function');
+figure; plot(obj_adap); title('Discontinuity Adaptive penalty'); xlabel('iterations'); ylabel('Objective function');
+
+
+
+save('results/obj_quad.mat',"obj_quad");
+save('results/obj_huber.mat',"obj_huber");
+save('results/obj_adap.mat',"obj_adap");
+
+
+##### SOURCE END #####
+--></body></html>
